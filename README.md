@@ -1,9 +1,10 @@
-# Code Sentinel Context-Aware Remediation Engine
-As a platform engineer, you want remediation suggestions for detected adversarial code, so you can fix issues without introducing new bugs.
+# Code Sentinel
+A VS-Code extension that highlights suspicious code in real time.
+
 ## Features
-* Remediation suggestions for HIGH severity findings
-* Fix suggestions preserve original resource intent
-* Suggestions are validated against Terraform plan compatibility
-## Usage
-1. Run `python -m pytest` to execute the tests
-2. Run `python src/remediation_engine.py` to execute the remediation engine
+* Highlights suspicious code in real time
+* Provides risk and remediation information for suspicious code
+* Can be disabled per workspace
+
+## Installation
+To install the extension, run the following command:

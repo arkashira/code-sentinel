@@ -1,10 +1,9 @@
 # Code Sentinel
-A VS-Code extension that highlights suspicious code in real time.
+Code Sentinel is a tool for providing actionable remediation suggestions for detected security threats.
 
-## Features
-* Highlights suspicious code in real time
-* Provides risk and remediation information for suspicious code
-* Can be disabled per workspace
+## Usage
+1. Initialize the Code Sentinel instance.
+2. Call the `get_findings` method to retrieve a list of findings.
+3. Iterate over the findings and apply the suggested remediations.
 
-## Installation
-To install the extension, run the following command:
+## Example

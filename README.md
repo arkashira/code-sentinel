@@ -1,9 +1,16 @@
-# Code Sentinel
-Code Sentinel is a tool for providing actionable remediation suggestions for detected security threats.
+# code-sentinel
+A minimal, pure‑Python implementation of a GitHub Action scanner that can be used in CI/CD pipelines.
 
-## Usage
-1. Initialize the Code Sentinel instance.
-2. Call the `get_findings` method to retrieve a list of findings.
-3. Iterate over the findings and apply the suggested remediations.
+## Features
+- Configurable via a YAML file.
+- Scans a string of source code for simple rule violations.
+- Produces a formatted comment for a PR.
+- Returns a status (`success` or `failure`) based on critical issues.
+- Exits with a non‑zero code when critical issues are found (handled by the caller).
 
-## Example
+## Usage (as a GitHub Action)
+The action would call the `main` function, passing the path to the config file and the code to scan (e.g., via environment variables or temporary files).
+The library itself is pure Python and has no runtime dependencies beyond the standard library.
+
+## Development
+Run the test suite:

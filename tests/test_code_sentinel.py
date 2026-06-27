@@ -1,51 +1,39 @@
-import json
-import os
-import tempfile
+from code_sentinel import CodeSentinel, Incident, PR
+from datetime import datetime
 import pytest
-from code_sentinel import (
-    load_config,
-    scan_code,
-    format_comment,
-    determine_status,
-    Issue,
-)
 
-def test_load_config_happy(tmp_path):
-    cfg_path = tmp_path / "cfg.yml"
-    cfg_path.write_text("max_line_length: 80\nforbid_print: true\n")
-    cfg = load_config(str(cfg_path))
-    assert cfg["max_line_length"] == 80
-    assert cfg["forbid_print"] is True
+def test_add_incident():
+    sentinel = CodeSentinel()
+    incident = Incident(1, "type1", "severity1", datetime.now())
+    sentinel.add_incident(incident)
+    assert len(sentinel.incidents) == 1
 
-def test_load_config_missing():
-    with pytest.raises(FileNotFoundError):
-        load_config("nonexistent.yml")
+def test_add_pr():
+    sentinel = CodeSentinel()
+    pr = PR(1, "title1", ["finding1"])
+    sentinel.add_pr(pr)
+    assert len(sentinel.prs) == 1
 
-def test_scan_code_happy():
-    code = "a = 1\nprint('hi')\n" + "x = 2\n"
-    cfg = {"max_line_length": 10, "forbid_print": True}
-    issues = scan_code(code, cfg)
-    # line 2 contains print -> critical, line 1 length ok, line 3 ok
-    assert any(i.severity == "critical" and i.line == 2 for i in issues)
-    assert len(issues) == 2  # corrected to 2
+def test_get_dashboard_data():
+    sentinel = CodeSentinel()
+    incident1 = Incident(1, "type1", "severity1", datetime.now())
+    incident2 = Incident(2, "type1", "severity2", datetime.now())
+    sentinel.add_incident(incident1)
+    sentinel.add_incident(incident2)
+    pr1 = PR(1, "title1", ["finding1"])
+    pr2 = PR(2, "title2", ["finding2"])
+    sentinel.add_pr(pr1)
+    sentinel.add_pr(pr2)
+    data = sentinel.get_dashboard_data()
+    assert data["blocked_incidents"] == 2
+    assert data["incident_types"] == {"type1": 2}
+    assert data["incident_severity"] == {"severity1": 1, "severity2": 1}
+    assert len(data["recent_prs"]) == 2
 
-def test_scan_code_edge_cases():
-    # Empty code should yield no issues regardless of config
-    issues = scan_code("", {"max_line_length": 5, "forbid_print": True})
-    assert issues == []
-
-def test_format_comment_no_issues():
-    comment = format_comment([])
-    assert "No issues found" in comment
-    assert comment.startswith("✅")
-
-def test_format_comment_with_issues():
-    issues = [
-        Issue(line=1, message="Too long", severity="warning"),
-        Issue(line=2, message="Print forbidden", severity="critical"),
-    ]
-    comment = format_comment(issues)
-    assert "code-sentinel scan results" in comment
-    assert "ℹ️" not in comment  # info emoji not used
-    assert "⚠️" in comment  # warning emoji used
-    assert "❌" in comment  # critical emoji used
+def test_get_dashboard_data_empty():
+    sentinel = CodeSentinel()
+    data = sentinel.get_dashboard_data()
+    assert data["blocked_incidents"] == 0
+    assert data["incident_types"] == {}
+    assert data["incident_severity"] == {}
+    assert data["recent_prs"] == []

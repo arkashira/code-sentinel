@@ -1,11 +1,14 @@
-[project]
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
+[tool.poetry]
 name = "code-sentinel"
 version = "0.1.0"
-description = "A tiny CI/CD scanner for GitHub Actions"
-requires-python = ">=3.8"
-authors = [{name = "Axentx"}]
-readme = "README.md"
-license = {text = "MIT"}
+description = ""
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
